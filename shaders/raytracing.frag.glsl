@@ -84,6 +84,12 @@ Hit intersect(Ray r) {
 vec3 illuminate(vec3 lightPosition, vec3 pos, vec3 wo, Hit h) {
     vec3 wi = lightPosition - pos;
     vec3 kd = h.material.kd;
+
+    Hit h0 = intersect(Ray(pos, lightPosition-pos));
+    if (h0.time != inf) {
+        return vec3(0.0);
+    }
+
     if (h.material.checker) {
         // Checkerboard pattern for the floor
         vec2 coords = floor(pos.xz);
