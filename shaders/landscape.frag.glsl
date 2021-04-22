@@ -11,11 +11,13 @@ void main() {
     vec2 coord = (2.0 * gl_FragCoord.xy - resolution) / resolution.y;
     coord *= scale;
 
+    float seed1 = 0.5;
+
     // "Organic" simplex noise values in range [-1, 1]
-    float noise1 = snoise(vec2(seed * 10000.0, 0) + coord);
-    float noise2 = snoise(vec2(seed * 10000.0, 1e3) + coord / 2.0);
-    float noise4 = snoise(vec2(seed * 10000.0, 2e3) + coord / 4.0);
-    float noise8 = snoise(vec2(seed * 10000.0, 3e3) + coord / 8.0);
+    float noise1 = snoise(vec2(seed1 * 10000.0, 0) + coord);
+    float noise2 = snoise(vec2(seed1 * 10000.0, 1e3) + coord / 2.0);
+    float noise4 = snoise(vec2(seed1 * 10000.0, 2e3) + coord / 4.0);
+    float noise8 = snoise(vec2(seed1 * 10000.0, 3e3) + coord / 8.0);
 
     // Display various scales of simplex noise
     vec3 color = 0.5 + 0.5 * vec3(noise1, noise2, noise8);
@@ -48,9 +50,10 @@ void main() {
     landColor = mix(landColor, vec3(0.9, 0.9, 0.5), beachFactor);
     color = mix(waterColor, landColor, landFactor);
 
-    float temp = 0.8*snoise(vec2(seed * 5000.0, 3e3) + coord / 8.0);
+    float temp = 0.5*snoise(vec2(seed1 * 5000.0, 3e3) + coord / 8.0);
 
-    color = mix(color, vec3(1,0,0), temp*landFactor);
+    // color = mix(color, vec3(1,0,0), sqrt(seed)*min(1.0, temp+seed)*(1.0-grassFactor));
+    color = mix(color, vec3(1,0,0), min(0.7,sqrt(seed)*min(1.0, temp+seed)*landFactor));
 
     gl_FragColor = vec4(color, 1.0);
 }
